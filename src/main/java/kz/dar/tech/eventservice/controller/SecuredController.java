@@ -7,9 +7,11 @@ import kz.dar.tech.eventservice.entity.Event;
 import kz.dar.tech.eventservice.entity.User;
 import kz.dar.tech.eventservice.service.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+
 
 @RestController
 @RequestMapping("/api/authorized")
@@ -62,11 +64,6 @@ public class SecuredController {
             @PathVariable Long eventId,
             @RequestBody Comment comment,
             Principal principal) {
-        Event event = eventService.findEventById(eventId);
-        User user = userService.findByUsername(principal.getName());
-        comment.setEvent(event);
-        comment.setUser(user);
-        Comment savedCommend = commentService.saveComment(comment);
-        return savedCommend;
+        return commentService.postComment(eventId, comment, principal);
     }
 }
