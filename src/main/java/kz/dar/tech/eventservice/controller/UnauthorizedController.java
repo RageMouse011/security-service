@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/unauthorized")
 @RequiredArgsConstructor
-public class UnsecuredController {
+public class UnauthorizedController {
 
     private final UserService userService;
     private final IndividualService individualService;
@@ -47,13 +47,28 @@ public class UnsecuredController {
         return limitedPartnershipService.registerLimitedPartnership(request);
     }
 
-    @GetMapping("events/allEvents")
+    @PostMapping("/authenticate/user")
+    public AuthenticationResponse authenticateUser(
+            @RequestBody AuthenticationRequest request
+    ) {
+        return userService.authenticateUser(request);
+    }
+
+    @PostMapping("/authenticate/limitedPartnership")
+    public AuthenticationResponse authenticateLimitedPartnership(
+            @RequestBody AuthenticationRequest request
+    ) {
+        return limitedPartnershipService.authenticateLimitedPartnership(request);
+    }
+
+    @GetMapping("events/all")
     public List<Event> getAllEvents() {
         return eventService.getAllEvents();
     }
 
     @GetMapping("/events/{section}")
-    public List<Event> getEventsBySection(@PathVariable String section) {
+    public List<Event> getEventsBySection(
+            @PathVariable String section) {
         return eventService.getEventsBySection(section);
     }
 }

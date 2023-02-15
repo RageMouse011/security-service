@@ -21,19 +21,17 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf()
-                .disable()
-                .authorizeHttpRequests()
-                .requestMatchers("/api/unauthorized/**")
+                .authorizeHttpRequests(authorize -> authorize
+                .requestMatchers( "/api/unauthorized/**")
                 .permitAll()
+                .requestMatchers("/api/authorized/organizer/**").hasRole("ORGANIZER")
+                .requestMatchers("/api/authorized/user/**").hasRole("USER")
                 .anyRequest()
                 .authenticated()
                 .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
+
                 .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class));
 
         return http.build();
     }
