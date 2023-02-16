@@ -28,7 +28,7 @@ public class LimitedPartnershipService {
         if (userListRepository.existsByEmail(request.getEmail())) {
             throw new IllegalStateException("User has already defined in system");
         }
-        LimitedPartnership limitedPartnership = LimitedPartnership.builder()
+        var limitedPartnership = LimitedPartnership.builder()
                 .bin(request.getBin())
                 .name(request.getName())
                 .email(request.getEmail())
