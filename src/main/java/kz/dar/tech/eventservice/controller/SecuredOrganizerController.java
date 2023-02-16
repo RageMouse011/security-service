@@ -2,33 +2,26 @@ package kz.dar.tech.eventservice.controller;
 
 import kz.dar.tech.eventservice.dto.AuthenticationRequest;
 import kz.dar.tech.eventservice.dto.AuthenticationResponse;
-import kz.dar.tech.eventservice.entity.Comment;
 import kz.dar.tech.eventservice.entity.Event;
-import kz.dar.tech.eventservice.entity.User;
-import kz.dar.tech.eventservice.service.*;
+import kz.dar.tech.eventservice.service.EventService;
+import kz.dar.tech.eventservice.service.IndividualEntrepreneurService;
+import kz.dar.tech.eventservice.service.IndividualService;
+import kz.dar.tech.eventservice.service.LimitedPartnershipService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/authorized")
 @RequiredArgsConstructor
-public class SecuredController {
+@RequestMapping("/api/authorized/organizer")
+public class SecuredOrganizerController {
 
-    private final UserService userService;
     private final IndividualService individualService;
     private final IndividualEntrepreneurService individualEntrepreneurService;
     private final LimitedPartnershipService limitedPartnershipService;
     private final EventService eventService;
-    private final CommentService commentService;
-
-    @PostMapping("/authenticate/user")
-    public AuthenticationResponse authenticateUser(
-            @RequestBody AuthenticationRequest request
-    ) {
-        return userService.authenticateUser(request);
-    }
 
     @PostMapping("/authenticate/individual")
     public AuthenticationResponse authenticateIndividual(
@@ -55,18 +48,5 @@ public class SecuredController {
     public Event postEvent(
             @RequestBody Event event) {
         return eventService.postEvent(event);
-    }
-
-    @PostMapping("/events/{eventId}/comments")
-    public Comment postComment(
-            @PathVariable Long eventId,
-            @RequestBody Comment comment,
-            Principal principal) {
-        Event event = eventService.findEventById(eventId);
-        User user = userService.findByUsername(principal.getName());
-        comment.setEvent(event);
-        comment.setUser(user);
-        Comment savedCommend = commentService.saveComment(comment);
-        return savedCommend;
     }
 }
